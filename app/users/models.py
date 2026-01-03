@@ -13,6 +13,7 @@ class User(SQLModel, table=True):
     last_name: str = Field(max_length=50)
     email: EmailStr = Field(unique=True, nullable=False)
     password: str = Field(nullable=False)
+    role: str
     is_verified: bool = False
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
