@@ -55,5 +55,10 @@ async def get_current_user(
     user_email = user_credentials.get("email")
 
     user = await user_service.get_user_by_email(email=user_email, session=session)
+    if user.is_verified == False:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Please verify your account",
+        )
 
     return user

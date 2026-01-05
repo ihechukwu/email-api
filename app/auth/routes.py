@@ -6,6 +6,7 @@ from app.core.database import get_session
 from sqlmodel.ext.asyncio.session import AsyncSession
 from app.users.service import UserService
 from app.core.config import settings
+from .utils import decode_url_safe_token
 
 
 auth_router = APIRouter()
@@ -42,3 +43,12 @@ async def login(user_data: UserLogin, session: AsyncSession = Depends(get_sessio
         "refresh_token": refresh_token,
         "token_type": "bearer",
     }
+
+
+@auth_router.get("/verify-email")
+async def verify_email(token: str, session: AsyncSession = Depends(get_session)):
+    token_data = decode_url_safe_token(token)
+    user_email = token_data.get("email")
+
+    await user_service.verify_email(email=user_email, session=session)
+    return {"msg": "Account verification successful"}

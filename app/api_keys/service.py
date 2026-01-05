@@ -62,4 +62,5 @@ class ApiKeyService:
             ApiKey.key == api_hash, ApiKey.is_active == True
         )
         result = await session.execute(statement)
+
         return result.scalar_one_or_none()

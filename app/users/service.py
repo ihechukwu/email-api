@@ -39,3 +39,21 @@ class UserService:
         statement = select(User).where(User.email == email)
         result = await session.execute(statement)
         return result.scalar_one_or_none()
+
+    async def verify_email(self, email: EmailStr, session: AsyncSession):
+        user = await self.get_user_by_email(email=email, session=session)
+        if user is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="not found"
+            )
+
+        if user.is_verified:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT, detail="already verified"
+            )
+
+        user.is_verified = True
+        session.add(user)
+        await session.commit()
+
+        return user
