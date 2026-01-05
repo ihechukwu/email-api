@@ -5,6 +5,7 @@ from .schemas import UserCreate, UserResponse
 from app.core.database import get_session
 from sqlmodel.ext.asyncio.session import AsyncSession
 from app.auth.utils import get_password_hash
+from app.auth.dependencies import get_current_user
 
 
 users_router = APIRouter()
@@ -18,4 +19,11 @@ async def register(user_data: UserCreate, session: AsyncSession = Depends(get_se
 
     user = await user_service.register(user_data=user_data, session=session)
 
+    return user
+
+
+@users_router.get("/generate-token")
+async def generate_token(
+    user=Depends(get_current_user), session: AsyncSession = Depends(get_session)
+):
     return user

@@ -33,6 +33,7 @@ async def login(user_data: UserLogin, session: AsyncSession = Depends(get_sessio
     refresh_token = create_access_token(
         {"user_id": str(user.id), "email": user.email},
         expire=timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS),
+        refresh=True,
     )
 
     return {
