@@ -7,3 +7,4 @@ class SendEmailRequest(BaseModel):
     to: List[EmailStr]
     subject: str = Field(min_length=1, max_length=250)
     html: str
+    sender: str

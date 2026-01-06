@@ -1,3 +1,4 @@
+from httpx import delete
 from sqlmodel.ext.asyncio.session import AsyncSession
 from .models import ApiKey
 from sqlalchemy import select
@@ -64,3 +65,16 @@ class ApiKeyService:
         result = await session.execute(statement)
 
         return result.scalar_one_or_none()
+
+    async def delete_api_key(self, user_id, session: AsyncSession):
+        api_key = await self.get_api_key(user_id=user_id, session=session)
+
+        try:
+            await session.delete(api_key)
+            await session.commit()
+
+        except IntegrityError:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Something went wrong",
+            )
