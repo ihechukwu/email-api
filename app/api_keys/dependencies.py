@@ -5,6 +5,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from .utils import hash_api_key
 from .service import ApiKeyService
 from datetime import datetime
+from app.rate_limit.utils import check_rate_limit
 
 
 api_key_service = ApiKeyService()
@@ -29,7 +30,7 @@ async def api_key_auth(
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid or revoked key"
         )
-
+    await check_rate_limit(api_key.id)
     api_key.last_used_at = datetime.utcnow()
     session.add(api_key)
     await session.commit()

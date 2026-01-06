@@ -11,7 +11,7 @@ emails_router = APIRouter()
 async def send_email(
     payload: SendEmailRequest,
     background_task: BackgroundTasks,
-    user=Depends(api_key_auth),
+    user_id=Depends(api_key_auth),
 ):
     mailer = get_mailer(payload.sender)
 
